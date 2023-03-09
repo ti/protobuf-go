@@ -796,12 +796,8 @@ func (e encoder) marshalTimestamp(m protoreflect.Message) error {
 	}
 	// Uses RFC 3339, where generated output will be Z-normalized and uses 0, 3,
 	// 6 or 9 fractional digits.
-	t := time.Unix(secs, nanos).UTC()
-	x := t.Format("2006-01-02T15:04:05.000000000")
-	x = strings.TrimSuffix(x, "000")
-	x = strings.TrimSuffix(x, "000")
-	x = strings.TrimSuffix(x, ".000")
-	e.WriteString(x + "Z")
+	t := time.Unix(secs, nanos).In(time.Local)
+	e.WriteString(t.Format(time.RFC3339))
 	return nil
 }
 

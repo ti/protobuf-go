@@ -7,7 +7,8 @@ package protojson
 import (
 	"encoding/base64"
 	"fmt"
-
+	
+	"github.com/gobeam/stringy"
 	"google.golang.org/protobuf/internal/encoding/json"
 	"google.golang.org/protobuf/internal/encoding/messageset"
 	"google.golang.org/protobuf/internal/errors"
@@ -274,7 +275,7 @@ func (e encoder) marshalSingular(val protoreflect.Value, fd protoreflect.FieldDe
 	case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Uint64Kind,
 		protoreflect.Sfixed64Kind, protoreflect.Fixed64Kind:
 		// 64-bit integers are written out as JSON string.
-		e.WriteString(val.String())
+		e.WriteInt(val.Int())
 
 	case protoreflect.FloatKind:
 		// Encoder.WriteFloat handles the special numbers NaN and infinites.
@@ -331,7 +332,8 @@ func (e encoder) marshalMap(mmap protoreflect.Map, fd protoreflect.FieldDescript
 
 	var err error
 	order.RangeEntries(mmap, order.GenericKeyOrder, func(k protoreflect.MapKey, v protoreflect.Value) bool {
-		if err = e.WriteName(k.String()); err != nil {
+		key := stringy.New(k.String()).CamelCase("?", "")
+		if err = e.WriteName(key); err != nil {
 			return false
 		}
 		if err = e.marshalSingular(v, fd.MapValue()); err != nil {

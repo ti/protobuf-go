@@ -270,8 +270,16 @@ func (fd *Field) Number() protoreflect.FieldNumber      { return fd.L1.Number }
 func (fd *Field) Cardinality() protoreflect.Cardinality { return fd.L1.Cardinality }
 func (fd *Field) Kind() protoreflect.Kind               { return fd.L1.Kind }
 func (fd *Field) HasJSONName() bool                     { return fd.L1.StringName.hasJSON }
-func (fd *Field) JSONName() string                      { return fd.L1.StringName.getJSON(fd) }
-func (fd *Field) TextName() string                      { return fd.L1.StringName.getText(fd) }
+func (fd *Field) JSONName() string {
+	chars := []rune(fd.L1.StringName.getJSON(fd))
+	c := chars[0]
+	if 'a' <= c && c <= 'z' {
+		c -= 'a' - 'A'
+	}
+	chars[0] = c
+	return string(chars)
+}
+func (fd *Field) TextName() string { return fd.L1.StringName.getText(fd) }
 func (fd *Field) HasPresence() bool {
 	return fd.L1.Cardinality != protoreflect.Repeated && (fd.L0.ParentFile.L1.Syntax == protoreflect.Proto2 || fd.L1.Message != nil || fd.L1.ContainingOneof != nil)
 }

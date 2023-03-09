@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gobeam/stringy"
 	"google.golang.org/protobuf/internal/encoding/json"
 	"google.golang.org/protobuf/internal/encoding/messageset"
 	"google.golang.org/protobuf/internal/errors"
@@ -627,7 +628,8 @@ func (d decoder) unmarshalMapKey(tok json.Token, fd protoreflect.FieldDescriptor
 	kind := fd.Kind()
 	switch kind {
 	case protoreflect.StringKind:
-		return protoreflect.ValueOfString(name).MapKey(), nil
+		key := stringy.New(name).SnakeCase("?", "").ToLower()
+		return protoreflect.ValueOfString(key).MapKey(), nil
 
 	case protoreflect.BoolKind:
 		switch name {
