@@ -332,7 +332,7 @@ func (e encoder) marshalMap(mmap protoreflect.Map, fd protoreflect.FieldDescript
 
 	var err error
 	order.RangeEntries(mmap, order.GenericKeyOrder, func(k protoreflect.MapKey, v protoreflect.Value) bool {
-		key := stringy.New(k.String()).CamelCase("?", "")
+		key := stringy.New(k.String()).CamelCase("?", "").Get()
 		if err = e.WriteName(key); err != nil {
 			return false
 		}
